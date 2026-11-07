@@ -49,8 +49,8 @@ window.WEAREKID_PROJECTS = [
       en: "Website Development",
     },
     description: {
-      ru: "Место для предстоящего веб-проекта — презентация десктоп и мобильных макетов.",
-      en: "Space reserved for an upcoming website project — desktop and mobile presentation.",
+      ru: "Место зарезервировано для предстоящего веб-проекта.",
+      en: "Space reserved for an upcoming website project.",
     },
     placeholder: "web",
     ratio: "16 / 11",
@@ -67,7 +67,7 @@ window.WEAREKID_PROJECTS = [
       en: "Digital Design / Presentation",
     },
     description: {
-      ru: "Место для предстоящего проекта презентации или бренд-дизайна.",
+      ru: "Место зарезервировано для предстоящего проекта презентации или бренд-дизайна.",
       en: "Space reserved for an upcoming presentation or brand design project.",
     },
     placeholder: "design",
@@ -85,7 +85,7 @@ window.WEAREKID_PROJECTS = [
       en: "Brand Presentation",
     },
     description: {
-      ru: "Место для предстоящего проекта бренд-презентации.",
+      ru: "Место зарезервировано для предстоящего проекта бренд-презентации.",
       en: "Space reserved for an upcoming brand presentation project.",
     },
     placeholder: "design",

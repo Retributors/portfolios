@@ -41,7 +41,7 @@
       <a href="#contact" data-nav data-i18n="nav.contact">Contact</a>
     </nav>
     <button class="lang-switch" id="langSwitch" data-i18n="lang.label" aria-label="Switch language" data-lang="ru">RU</button>
-    <a class="btn btn--accent btn--sm header__cta" href="#contact" data-magnetic data-i18n="contact.cta"><span>Start a project</span></a>
+    <a class="btn btn--accent btn--sm header__cta" href="#contact" data-magnetic><span data-i18n="contact.cta">Начать проект</span></a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
   </header>
 
@@ -64,12 +64,20 @@
           <div class="rig" id="rig">
             <div class="floor"></div>
             <div class="laptop">
+              <!-- LID -->
               <div class="lid" id="lid">
                 <div class="lid__front">
                   <div class="bezel">
                     <i class="cam"></i>
                     <div class="screen">
-                      <img id="supraScreen" src="assets/images/supra-hero.webp" alt="SUPRA restaurant interior visualization" width="1920" height="1080" decoding="async" fetchpriority="high">
+                      <!--
+                        ┌─────────────────────────────────────────────┐
+                        │ SUPRA IMAGE PLACEHOLDER — HERO MACBOOK SCREEN │
+                        │ Replace the file:  assets/images/supra-hero.webp │
+                        │ (16:10 or 16:9 works best, 1920px wide)        │
+                        └─────────────────────────────────────────────┘
+                      -->
+                      <img id="supraScreen" src="assets/images/supra-hero.webp" alt="SUPRA restaurant website mockup" width="1920" height="1080" decoding="async" fetchpriority="high">
                       <div class="screen__missing" id="screenMissing" hidden>ADD SUPRA IMAGE<small>assets/images/supra-hero.webp</small></div>
                       <div class="screen__glare"></div>
                     </div>
@@ -78,6 +86,7 @@
                 <div class="lid__back"><span class="apple-logo"></span></div>
                 <i class="edge edge--l"></i><i class="edge edge--r"></i><i class="edge edge--t"></i>
               </div>
+              <!-- BASE -->
               <div class="base">
                 <div class="base__top">
                   <div class="keys"></div>
@@ -94,10 +103,10 @@
 
       <div class="hero__content">
         <p class="eyebrow reveal-fade" data-delay="0.2"><span class="dot"></span><span data-i18n="hero.eyebrow">Independent digital studio</span></p>
-        <h1 class="hero__title">
+        <h1 class="hero__title" aria-label="We build digital experiences.">
           <span class="line"><span data-i18n="hero.title1">WE BUILD</span></span>
           <span class="line"><span data-i18n="hero.title2">DIGITAL</span></span>
-          <span class="line"><span data-i18n="hero.title3">EXPERIENCES</span><em>.</em></span>
+          <span class="line"><span data-i18n="hero.title3">EXPERIENCES<em>.</em></span></span>
         </h1>
         <div class="hero__foot">
           <p class="hero__lead reveal-fade" data-delay="0.7" data-i18n="hero.lead">Independent digital studio creating websites, visual identities and immersive 3D experiences.</p>
@@ -115,14 +124,14 @@
     <section class="section work" id="work" aria-labelledby="workTitle">
       <div class="container">
         <div class="section__head">
-          <p class="label reveal-fade"><span class="label__num">01</span><span data-i18n="work.label">Selected work</span></p>
+          <p class="label reveal-fade"><span>01</span><span data-i18n="work.label">Selected work</span></p>
           <h2 class="display" id="workTitle">
             <span class="line"><span data-i18n="work.title1">SELECTED</span></span>
-            <span class="line"><span data-i18n="work.title2">WORK</span><em>.</em></span>
+            <span class="line"><span data-i18n="work.title2">WORK<em>.</em></span></span>
           </h2>
           <p class="section__sub reveal-fade" data-i18n="work.sub">A selection of digital experiences.</p>
         </div>
-        <div class="work__grid" id="workGrid"></div>
+        <div class="work__grid" id="workGrid"><!-- rendered from js/projects.js --></div>
       </div>
     </section>
 
@@ -130,10 +139,10 @@
     <section class="section services" id="services" aria-labelledby="servicesTitle">
       <div class="container">
         <div class="section__head">
-          <p class="label reveal-fade"><span class="label__num">02</span><span data-i18n="services.label">Services</span></p>
+          <p class="label reveal-fade"><span>02</span><span data-i18n="services.label">Services</span></p>
           <h2 class="display" id="servicesTitle">
             <span class="line"><span data-i18n="services.title1">WHAT WE</span></span>
-            <span class="line"><span data-i18n="services.title2">CREATE</span><em>.</em></span>
+            <span class="line"><span data-i18n="services.title2">CREATE<em>.</em></span></span>
           </h2>
         </div>
         <ul class="service-list" id="serviceList"></ul>
@@ -144,10 +153,10 @@
     <section class="section about" id="about" aria-labelledby="aboutTitle">
       <div class="container about__grid">
         <div>
-          <p class="label reveal-fade"><span class="label__num">03</span><span data-i18n="about.label">About</span></p>
+          <p class="label reveal-fade"><span>03</span><span data-i18n="about.label">About</span></p>
           <h2 class="display" id="aboutTitle">
             <span class="line"><span data-i18n="about.title1">SMALL</span></span>
-            <span class="line"><span data-i18n="about.title2">STUDIO</span><em>.</em></span>
+            <span class="line"><span data-i18n="about.title2">STUDIO<em>.</em></span></span>
             <span class="line"><span class="muted" data-i18n="about.title3">BIG IDEAS</span><em>.</em></span>
           </h2>
         </div>
@@ -163,10 +172,10 @@
     <section class="section process" id="process" aria-labelledby="processTitle">
       <div class="container">
         <div class="section__head">
-          <p class="label reveal-fade"><span class="label__num">04</span><span data-i18n="process.label">Process</span></p>
+          <p class="label reveal-fade"><span>04</span><span data-i18n="process.label">Process</span></p>
           <h2 class="display" id="processTitle">
             <span class="line"><span data-i18n="process.title1">HOW WE</span></span>
-            <span class="line"><span data-i18n="process.title2">WORK</span><em>.</em></span>
+            <span class="line"><span data-i18n="process.title2">WORK<em>.</em></span></span>
           </h2>
         </div>
         <ol class="timeline" id="timeline"></ol>
@@ -177,10 +186,10 @@
     <!-- CONTACT -->
     <section class="section contact" id="contact" aria-labelledby="contactTitle">
       <div class="container">
-        <p class="label reveal-fade"><span class="label__num">05</span><span data-i18n="contact.label">Contact</span></p>
+        <p class="label reveal-fade"><span>05</span><span data-i18n="contact.label">Contact</span></p>
         <h2 class="display display--xl" id="contactTitle">
           <span class="line"><span data-i18n="contact.title1">HAVE A PROJECT</span></span>
-          <span class="line"><span data-i18n="contact.title2">IN MIND</span><em>?</em></span>
+          <span class="line"><span data-i18n="contact.title2">IN MIND<em>?</em></span></span>
         </h2>
         <div class="contact__row">
           <p class="contact__lead reveal-fade" data-i18n="contact.lead">Let’s turn your idea into something remarkable.</p>
@@ -193,30 +202,16 @@
 
   <footer class="footer">
     <div class="container footer__row">
-      <div class="footer__brand">
-        <a class="logo" href="#top" data-i18n="brand">WEAREKID</a>
-        <p class="footer__desc" data-i18n="footer.desc">Independent digital studio. Design, technology, visual storytelling, digital experiences.</p>
-      </div>
-      <nav class="footer__nav" aria-label="Footer">
-        <a href="#work" data-nav data-i18n="nav.work">Work</a>
-        <a href="#services" data-nav data-i18n="nav.services">Services</a>
-        <a href="#about" data-nav data-i18n="nav.about">About</a>
-        <a href="#contact" data-nav data-i18n="nav.contact">Contact</a>
-      </nav>
-      <div class="footer__contacts">
-        <a href="https://t.me/kidIover" target="_blank" rel="noopener" data-i18n="contact.telegram">Telegram</a>
-        <a href="mailto:zzxcvcumber@gmail.com" data-i18n="contact.email">Email</a>
-        <a href="https://www.behance.net/weekkid" target="_blank" rel="noopener" data-i18n="contact.behance">Behance</a>
-      </div>
-      <p class="footer__copyright" id="footerCopyright" data-i18n="footer.copyright">WEAREKID. All rights reserved.</p>
-      <a class="footer__top" href="#top" data-cursor="Top" data-i18n="footer.backToTop">Back to top ↑</a>
+      <a class="logo" href="#top" data-i18n="brand">WEAREKID</a>
+      <p>© <span id="year">2026</span> WEAREKID. Independent digital studio, Kazakhstan.</p>
+      <a class="footer__top" href="#top" data-cursor="Top">Back to top ↑</a>
     </div>
   </footer>
 
   <!-- PROJECT DIALOG (project detail view) -->
   <dialog class="project" id="project" aria-labelledby="projectTitle">
     <div class="project__inner">
-      <button class="project__close" id="projectClose" type="button" aria-label="Close project" data-i18n="project.close"><span>Close</span><i></i></button>
+      <button class="project__close" id="projectClose" type="button" aria-label="Close project"><span>Close</span><i></i></button>
       <div class="project__head">
         <p class="label" id="projectCat"></p>
         <h2 id="projectTitle"></h2>

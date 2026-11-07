@@ -84,7 +84,18 @@
   const io = new IntersectionObserver((es) => es.forEach((e) => {
     if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
   }), { threshold: 0.15, rootMargin: "0px 0px -6% 0px" });
-  $$(".display, .reveal-fade").forEach((el) => io.observe(el));
+  const revealEls = $$(".display, .reveal-fade");
+  revealEls.forEach((el) => io.observe(el));
+  /* reveal above-fold content immediately on load */
+  const revealInView = () => {
+    const vh = innerHeight;
+    revealEls.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh - 80 && r.bottom > 80) el.classList.add("in");
+    });
+  };
+  revealInView();
+  addEventListener("scroll", revealInView, { passive: true });
 
   /* loader */
   const loader = $("#loader");

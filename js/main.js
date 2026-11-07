@@ -15,8 +15,6 @@
   const i18n = window.WEAREKID_I18N;
   const projects = window.WEAREKID_PROJECTS || [];
 
-  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
   /* ───────── Localization ───────── */
   const stored = localStorage.getItem("wearekid-lang");
   i18n.current = stored && i18n.strings[stored] ? stored : "ru";
@@ -59,7 +57,7 @@
     if (ml) { ml.textContent = i18n.languages[lang]; ml.dataset.lang = lang; }
 
     /* Re-render dynamic content */
-    renderProjects();
+    renderWork();
     renderServices();
     renderAbout();
     renderProcess();
@@ -77,8 +75,15 @@
     applyLang(next);
   };
 
-  /* ───────── Contact links (from config) ───────── */
+  /* ───────── Contact links (from js/config.js) ───────── */
   const mail = `mailto:${cfg.email}?subject=${encodeURIComponent(cfg.emailSubject || "")}`;
+  $$("[data-link]").forEach((a) => {
+    const k = a.dataset.link;
+    a.href = k === "email" ? mail : cfg[k] || "#";
+  });
+  $("#startProject").href = mail;
+  $("#year").textContent = new Date().getFullYear();
+
   const renderContact = () => {
     const links = [
       { k: "telegram", url: cfg.telegram, blank: true },
@@ -86,25 +91,18 @@
       { k: "behance", url: cfg.behance, blank: true },
     ];
     const container = $("#contactLinks");
+    if (!container) return;
     container.innerHTML = links.map((l) => `
       <li>
-        <a href="${l.url}" ${l.blank ? 'target="_blank" rel="noopener"' : ""} data-link="${l.k}" data-i18n="contact.${l.k}">${t(l.k)}</a>
+        <a href="${l.url}" ${l.blank ? 'target="_blank" rel="noopener"' : ""} data-link="${l.k}" data-i18n="contact.${l.k}">${i18n.t(l.k, i18n.current)}</a>
       </li>
     `).join("");
     $("#startProject").href = mail;
   };
-  const t = (k) => i18n.t(k, i18n.current);
 
-  /* Ensure existing [data-link] anchors get href (fallback) */
-  const wireContactLinks = () => {
-    $$("[data-link]").forEach((a) => {
-      const k = a.dataset.link;
-      if (k === "email") a.href = mail;
-      else if (cfg[k]) a.href = cfg[k];
-    });
-  };
+  /* ───────── Render projects (from js/projects.js) ───────── */
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  /* ───────── Render projects (translated) ───────── */
   const projField = (p, key) => {
     const v = p[key];
     return typeof v === "object" && v !== null ? v[i18n.current] : v;
@@ -130,19 +128,19 @@
       <span class="card__cap"><span>${p.no} — ${esc(projField(p, "category"))}</span><span>Coming soon</span></span>
     </a>`;
 
-  const renderProjects = () => {
+  const renderWork = () => {
     const html = [];
     projects.forEach((p) => {
       if (p.placeholder) {
         html.push(placeholderCard(p, p.placeholder === "web" ? "p-placeholder--web" : "p-placeholder--design"));
         return;
       }
-      const name = projField(p, "title");
+      const [name, ...rest] = projField(p, "title").split(" — ");
       html.push(`
         ${imgCard(p, 0, "p-supra__main", `${p.no} — ${esc(name)}`)}
         <div class="p-supra__info reveal-fade" data-delay="0.15">
           <span class="p-supra__no">${p.no} / FEATURED</span>
-          <h3 class="p-supra__title">${esc(name)}</h3>
+          <h3 class="p-supra__title">${esc(name)}<span>${esc(rest.join(" — "))}</span></h3>
           <p class="p-supra__cat">${esc(projField(p, "category"))}</p>
           <p class="p-supra__desc">${esc(projField(p, "description"))}</p>
           <a class="link-arrow card" href="#project-${p.id}" data-open="${p.id}" data-cursor="View"><span>View project</span><b aria-hidden="true">→</b></a>
@@ -150,7 +148,8 @@
         ${p.images[1] ? imgCard(p, 1, "p-supra__a", "Detail") : ""}
         ${p.images[2] ? imgCard(p, 2, "p-supra__b", "Atmosphere") : ""}`);
     });
-    $("#workGrid").innerHTML = html.join("");
+    const workGrid = $("#workGrid");
+    if (workGrid) workGrid.innerHTML = html.join("");
   };
 
   /* Missing-image handling */
@@ -161,39 +160,9 @@
   };
   $$(".card__plx img, .project img").forEach((img) => img.addEventListener("error", () => missing(img), { once: true }));
   const screenImg = $("#supraScreen");
-  screenImg.addEventListener("error", () => { screenImg.hidden = true; $("#screenMissing").hidden = false; }, { once: true });
-
-  /* ───────── Render services (translated) ───────── */
-  const renderServices = () => {
-    const items = i18n.strings[i18n.current].services.items;
-    $("#serviceList").innerHTML = items.map((s, i) => `
-      <li class="service" tabindex="0">
-        <span class="service__no">${String(i + 1).padStart(2, "0")}</span>
-        <div class="service__main">
-          <h3>${esc(s.title)}</h3>
-          <p class="service__short">${esc(s.short)}</p>
-          <div class="service__more"><p>${esc(s.more)}</p></div>
-        </div>
-        <span class="service__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
-      </li>`).join("");
-  };
-
-  /* ───────── Render about meta (translated) ───────── */
-  const renderAbout = () => {
-    const m = i18n.strings[i18n.current].about.meta;
-    $("#aboutMeta").innerHTML = `
-      <div><dt>${t("about.meta.based")}</dt><dd>${m.basedValue}</dd></div>
-      <div><dt>${t("about.meta.disciplines")}</dt><dd>${m.disciplinesValue}</dd></div>
-      <div><dt>${t("about.meta.status")}</dt><dd class="ok"><i></i>${m.statusValue}</dd></div>`;
-  };
-
-  /* ───────── Render process steps (translated) ───────── */
-  const renderProcess = () => {
-    const steps = i18n.strings[i18n.current].process.steps;
-    $("#timeline").innerHTML = steps.map((s, i) => `
-      <li class="step" data-step="${i}"><button type="button"><span class="step__node"></span><span class="step__no">${s.no}</span><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></button></li>`).join("");
-    $("#timelineFill") && ($("#timelineFill").style.setProperty("--p", "0"));
-  };
+  if (screenImg) {
+    screenImg.addEventListener("error", () => { screenImg.hidden = true; $("#screenMissing").hidden = false; }, { once: true });
+  }
 
   /* ───────── Loader ───────── */
   const loader = $("#loader");
@@ -230,6 +199,7 @@
   const visual = $("#heroVisual");
   const stage = $("#stage");
   const rig = $("#rig");
+  const glare = $(".screen");
   const lid = { cur: -90, tar: -90 };
   const openLid = () => { lid.tar = 12; };
   const mouse = { x: 0, y: 0, cx: 0, cy: 0 };
@@ -242,8 +212,10 @@
     stage.style.left = `${(w - 700 * s) / 2}px`;
     stage.style.top = `${(h - 640 * s) / 2}px`;
   };
-  new ResizeObserver(fit).observe(visual);
-  fit();
+  if (visual) {
+    new ResizeObserver(fit).observe(visual);
+    fit();
+  }
 
   const frame = (now) => {
     looping = false;
@@ -259,12 +231,14 @@
     rig.style.setProperty("--rx", rx.toFixed(2) + "deg");
     rig.style.setProperty("--ty", ty.toFixed(1) + "px");
     rig.style.setProperty("--lid", lid.cur.toFixed(2) + "deg");
-    $(".screen__glare").style.setProperty("--gx", (40 + mouse.cx * 30 + scrollP * 40).toFixed(1) + "%");
+    if (glare) glare.style.setProperty("--gx", (40 + mouse.cx * 30 + scrollP * 40).toFixed(1) + "%");
     if (heroVisible && !reduced) schedule();
     else if (Math.abs(lid.cur - lid.tar) > 0.05) schedule();
   };
   const schedule = () => { if (!looping) { looping = true; requestAnimationFrame(frame); } };
-  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; if (heroVisible) schedule(); }, { threshold: 0 }).observe($("#hero"));
+  if ($("#hero")) {
+    new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; if (heroVisible) schedule(); }, { threshold: 0 }).observe($("#hero"));
+  }
   if (finePointer) {
     addEventListener("pointermove", (e) => {
       mouse.x = (e.clientX / innerWidth - 0.5) * 2;
@@ -343,7 +317,7 @@
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
     const id = a.getAttribute("href");
-    if (id.startsWith("#project-")) return;
+    if (id.startsWith("#project-")) return; // handled by project view
     if (id === "#") return;
     const el = id === "#top" ? document.body : $(id);
     if (!el) return;
@@ -354,7 +328,7 @@
     history.replaceState(null, "", id);
   });
 
-  /* ───────── Mobile menu + language switcher ───────── */
+  /* ───────── Mobile menu ───────── */
   const burger = $("#burger"), menu = $("#menu");
   const setMenu = (open) => {
     menuOpen = open;
@@ -367,9 +341,6 @@
   const closeMenu = () => { if (menuOpen) setMenu(false); };
   burger.addEventListener("click", () => setMenu(!menuOpen));
   addEventListener("keydown", (e) => { if (e.key === "Escape") closeMenu(); });
-
-  $("#langSwitch").addEventListener("click", switchLang);
-  $("#menuLang").addEventListener("click", () => { switchLang(); closeMenu(); });
 
   /* ───────── Reveal on scroll ───────── */
   const io = new IntersectionObserver((es) => es.forEach((e) => {
@@ -414,32 +385,68 @@
     if (!finePointer) s.classList.toggle("is-open");
   }));
 
-  /* ───────── Process timeline ───────── */
-  const tl = $("#timeline");
-  const setStep = (i) => {
-    const steps = $$(".step", tl);
-    steps.forEach((s, k) => { s.classList.toggle("is-active", k === i); s.classList.toggle("is-seen", k <= i); });
-    tl.style.setProperty("--p", i >= steps.length - 1 ? 1 : i / steps.length);
+  /* ───────── Render services (translated) ───────── */
+  const renderServices = () => {
+    const items = i18n.strings[i18n.current].services.items;
+    const serviceList = $("#serviceList");
+    if (!serviceList) return;
+    serviceList.innerHTML = items.map((s, i) => `
+      <li class="service" tabindex="0">
+        <span class="service__no">${String(i + 1).padStart(2, "0")}</span>
+        <div class="service__main">
+          <h3>${esc(s.title)}</h3>
+          <p class="service__short">${esc(s.short)}</p>
+          <div class="service__more"><p>${esc(s.more)}</p></div>
+        </div>
+        <span class="service__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 18 18 6M8 6h10v10" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
+      </li>`).join("");
   };
-  tl.addEventListener("mouseenter", (e) => {
-    const b = e.target.closest(".step");
-    if (b) setStep([...$$(".step", tl)].indexOf(b));
-  });
-  tl.addEventListener("focusin", (e) => {
-    const b = e.target.closest(".step");
-    if (b) setStep([...$$(".step", tl)].indexOf(b));
-  });
-  tl.addEventListener("click", (e) => {
-    const b = e.target.closest(".step");
-    if (b) setStep([...$$(".step", tl)].indexOf(b));
-  });
-  new IntersectionObserver(([e], obs) => {
-    if (!e.isIntersecting) return;
-    obs.disconnect();
-    if (reduced) { setStep(steps.length - 1); return; }
-    const steps = $$(".step", tl);
-    steps.forEach((_, i) => setTimeout(() => setStep(i), 300 + i * 750));
-  }, { threshold: 0.4 }).observe(tl);
+
+  /* ───────── Render about meta (translated) ───────── */
+  const renderAbout = () => {
+    const m = i18n.strings[i18n.current].about.meta;
+    const aboutMeta = $("#aboutMeta");
+    if (!aboutMeta) return;
+    aboutMeta.innerHTML = `
+      <div><dt>${i18n.t("about.meta.based", i18n.current)}</dt><dd>${m.basedValue}</dd></div>
+      <div><dt>${i18n.t("about.meta.disciplines", i18n.current)}</dt><dd>${m.disciplinesValue}</dd></div>
+      <div><dt>${i18n.t("about.meta.status", i18n.current)}</dt><dd class="ok"><i></i>${m.statusValue}</dd></div>`;
+  };
+
+  /* ───────── Process timeline ───────── */
+  const renderProcess = () => {
+    const steps = i18n.strings[i18n.current].process.steps;
+    const tl = $("#timeline");
+    if (!tl) return;
+    tl.innerHTML = steps.map((s, i) => `
+      <li class="step" data-step="${i}"><button type="button"><span class="step__node"></span><span class="step__no">${s.no}</span><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></button></li>`).join("");
+    const fill = $("#timelineFill");
+    if (fill) fill.style.setProperty("--p", "0");
+    const setStep = (i) => {
+      const stepsEls = $$(".step", tl);
+      stepsEls.forEach((s, k) => { s.classList.toggle("is-active", k === i); s.classList.toggle("is-seen", k <= i); });
+      tl.style.setProperty("--p", i >= stepsEls.length - 1 ? 1 : i / stepsEls.length);
+    };
+    tl.addEventListener("mouseenter", (e) => {
+      const b = e.target.closest(".step");
+      if (b) setStep([...stepsEls].indexOf(b));
+    });
+    tl.addEventListener("focusin", (e) => {
+      const b = e.target.closest(".step");
+      if (b) setStep([...stepsEls].indexOf(b));
+    });
+    tl.addEventListener("click", (e) => {
+      const b = e.target.closest(".step");
+      if (b) setStep([...stepsEls].indexOf(b));
+    });
+    new IntersectionObserver(([e], obs) => {
+      if (!e.isIntersecting) return;
+      obs.disconnect();
+      if (reduced) { setStep(stepsEls.length - 1); return; }
+      const stepsEls2 = $$(".step", tl);
+      stepsEls2.forEach((_, i) => setTimeout(() => setStep(i), 300 + i * 750));
+    }, { threshold: 0.4 }).observe(tl);
+  };
 
   /* ───────── Project view (dialog) ───────── */
   const dlg = $("#project");
@@ -454,7 +461,7 @@
       const svc = typeof p.services === "object" ? p.services[i18n.current] : p.services;
       meta.push(["Scope", Array.isArray(svc) ? svc.join(" · ") : svc]);
     }
-    if (p.placeholder) meta.push(["Status", t("project.view") === "View project" ? "Space reserved for a future project" : "Место зарезервировано для будущего проекта"]);
+    if (p.placeholder) meta.push(["Status", i18n.t("project.view", i18n.current) === "View project" ? "Space reserved for a future project" : "Место зарезервировано для будущего проекта"]);
     $("#projectMeta").innerHTML = meta.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
     $("#projectGallery").innerHTML = p.images
       ? p.images.map((im) => {
@@ -505,9 +512,13 @@
   });
   if (location.hash.startsWith("#project-")) addEventListener("load", () => openProject(location.hash.slice(9), false));
 
+  /* ───────── Language switcher ───────── */
+  $("#langSwitch").addEventListener("click", switchLang);
+  $("#menuLang").addEventListener("click", () => { switchLang(); closeMenu(); });
+
   /* ───────── Go ───────── */
   applyLang(i18n.current);
-  wireContactLinks();
+  renderContact();
   runLoader();
-  setTimeout(() => { if (!ready) start(); }, 4500);
+  setTimeout(() => { if (!ready) start(); }, 4500); // safety net
 })();
